@@ -9,5 +9,5 @@ message MyMessage {
 service Foo {
     rpc sendUnary(MyMessage) returns (MyMessage) {};
     rpc sendStream(stream MyMessage) returns (MyMessage) {};
-    rpc sendBiStream(MyMessage) returns (stream MyMessage) {};
+    rpc sendBiStream(stream MyMessage) returns (stream MyMessage) {};
 }

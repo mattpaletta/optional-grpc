@@ -14,7 +14,7 @@ setup(
     include_package_data=True,
     install_requires=["grpcio",
                       "grpcio-tools",
-                      "grpcio-tools", "mypy-protobuf"],
+                      "mypy-protobuf"],
     author="Matthew Paletta",
     author_email="mattpaletta@gmail.com",
     description="An optional thrift wrapper for local debuggging.",

@@ -1,0 +1,2 @@
+git+git://github.com/mattpaletta/configparser.git
+git+git://github.com/mattpaletta/optional-grpc.git

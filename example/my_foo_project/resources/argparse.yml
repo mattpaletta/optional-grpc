@@ -1,0 +1,17 @@
+System:
+  use_rpc:
+    choices: ["auto", "force", "always", "never"]
+    default: "auto"
+    help: "If 'auto', it will try and use good defaults. If never, it will never use rpc.  If always, it will always use rpc.
+    If force, the program will crash if it tries to wrap a server that does not specify it"
+
+  mode:
+    choices: ["local", "cluster"]
+    default: "cluster"
+    required: False
+    help: "Specify deployment type.  Controls whether to run functions locally or over (G)RPC"
+
+  service:
+    choices: ["foo", "client"]
+    default: "client"
+    help: "Which service should this instance start"
