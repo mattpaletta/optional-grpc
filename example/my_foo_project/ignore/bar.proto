@@ -1,0 +1,12 @@
+syntax = "proto3";
+package bar.client;
+
+import "my_foo_project/client/foo.proto";
+
+// Here we're importing the other file, but this file will be ignored, based on our ...protolang file in this directory.
+
+service Bar {
+    rpc sendUnary(foo.MyMessage) returns (foo.MyMessage) {};
+    rpc sendStream(stream foo.MyMessage) returns (foo.MyMessage) {};
+    rpc sendBiStream(foo.MyMessage) returns (stream foo.MyMessage) {};
+}
