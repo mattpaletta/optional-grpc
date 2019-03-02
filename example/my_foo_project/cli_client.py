@@ -10,7 +10,7 @@ def run_sample_client(configs):
     # Here's an example client.
 
     # We want a client API, so we set `server = False`
-    client = Foo(configs = configs, server = False, use_rpc = not IS_RUNNING_LOCAL)
+    client: Foo = Foo(configs = configs, server = False, use_rpc = not IS_RUNNING_LOCAL)
 
     method_options = ["unary", "stream", "bistream"]
 

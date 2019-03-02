@@ -1,4 +1,4 @@
-from typing import Dict, Iterator
+from typing import Dict, Iterator, Union
 from grpc import RpcContext
 from optionalgrpc.service import Service
 
@@ -9,7 +9,7 @@ from my_foo_project.client import foo_pb2_grpc, foo_pb2
          stub = foo_pb2_grpc.FooStub,
          port = 1000)
 class Foo(foo_pb2_grpc.FooServicer):
-    def __init__(self, configs: Dict[str, any], server=False, use_rpc=False):
+    def __init__(self, configs: Dict[str, Union[int, str]], server:bool = False, use_rpc: bool = False):
         self.configs = configs
         self.server = server
         self.use_rpc = use_rpc

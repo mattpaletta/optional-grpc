@@ -16,15 +16,18 @@ them as normal Python objects.<br>
 2. Wrap the function, passing in the generated thrift servicer function, as well as the stub and the desired port.
 3. The initializer must be a subclass of follow the signature: `def __init__(self, configs: Dict[str, any], server=False, use_rpc=False):`<br>
 
-```{python}
+```python
+from typing import Dict, Union
 from optionalgrpc.service import Service
+
 from my_foo_project.client import foo_pb2_grpc
+
 
 @Service(rpc_servicer = foo_pb2_grpc.add_FooServicer_to_server,
          stub = foo_pb2_grpc.FooStub,
          port = 1000)
 class Foo(foo_pb2_grpc.FooServicer):
-    def __init__(self, configs: Dict[str, any], server=False, use_rpc=False):
+    def __init__(self, configs: Dict[str, Union[int, str]], server:bool = False, use_rpc: bool = False):
         self.configs = configs
         self.server = server
         self.use_rpc = use_rpc
@@ -36,7 +39,7 @@ For simplicity at the moment, `configs`, `server`, and `use_rpc` must use `kwarg
 This is enforced within the library.
 
 For example, to create a server/client for the service `Foo`:
-```{python}
+```python
 server = Foo(configs = configs, server = True, use_rpc = not IS_RUNNING_LOCALLY)
 client = Foo(configs = configs, server = False, use_rpc = not IS_RUNNING_LOCALLY)
 ```

@@ -1,12 +1,11 @@
 import logging
 import os
 import sys
-from typing import Iterator
 
 import grpc
 
 from configs.parser import Parser
-from optionalgrpc import ONE_DAY_IN_SECONDS, IS_RUNNING_LOCAL
+from optionalgrpc import ONE_DAY_IN_SECONDS
 
 
 def main():
