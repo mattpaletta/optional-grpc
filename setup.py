@@ -16,6 +16,10 @@ setup(
                       "grpcio-tools",
                       "mypy-protobuf",
                       "pynotstdlib"],
+    extras_require={
+        "prometheus": ["prometheus-client",
+                       "py-grpc-prometheus"]
+    },
     author="Matthew Paletta",
     author_email="mattpaletta@gmail.com",
     description="An optional grpc wrapper for local debuggging.",

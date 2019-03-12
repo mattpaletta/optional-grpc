@@ -9,6 +9,16 @@ from optionalgrpc import IS_RUNNING_LOCAL
 from pynotstdlib.singleton import Singleton
 
 
+try:
+    from py_grpc_prometheus.prometheus_client_interceptor import PromClientInterceptor
+    from py_grpc_prometheus.prometheus_server_interceptor import PromServerInterceptor
+    from prometheus_client import start_http_server
+    _prometheus_support = True
+
+except ImportError:
+    _prometheus_support = False
+
+
 class Service(object):
     """
     Wrapper for GRPC Classes to allow for easy switching between using RPC calls
@@ -16,7 +26,8 @@ class Service(object):
     can connect to the server at the name of the thrift_class.
     """
 
-    def __init__(self, rpc_servicer=None, stub = None, port: int = 0, pool_size=(cpu_count() - 1), num_retries=-1):
+    def __init__(self, rpc_servicer=None, stub = None, port: int = 0, pool_size=(cpu_count() - 1), num_retries=-1,
+                 metrics_port: int = 9093):
         """
         :param class rpc_servicer: Generated grpc servicer method we are wrapping.
         :param int port: The port for the rpc stub to listen on/call to.
@@ -25,6 +36,8 @@ class Service(object):
         """
 
         self._rpc_servicer_method = rpc_servicer
+
+        self._metrics_port = metrics_port
 
         if self._rpc_servicer_method is not None:
             assert stub is not None, "Requires stub for clients."
@@ -36,7 +49,12 @@ class Service(object):
         self._num_retries = max(3, num_retries)
 
     def _get_service(self, inst, service_name: str = None):
-        server = grpc.server(futures.ThreadPoolExecutor(max_workers = self._pool_size))
+        if _prometheus_support:
+            server = grpc.server(futures.ThreadPoolExecutor(max_workers = self._pool_size),
+                                                            interceptors = (PromServerInterceptor,))
+            start_http_server(self._metrics_port)
+        else:
+            server = grpc.server(futures.ThreadPoolExecutor(max_workers = self._pool_size))
         assert self._rpc_servicer_method is not None, "Service not wrapped: {0}".format(service_name)
 
         self._rpc_servicer_method(inst, server)
@@ -121,4 +139,10 @@ class Service(object):
         assert self._port is not None and self._port > 0, "Invalid port."
         hostname = "{0}:{1}".format(service_name.lower(), self._port)
         logging.debug("Trying hostname: " + hostname)
-        return grpc.insecure_channel(hostname)
+        if _prometheus_support:
+            channel = grpc.intercept_channel(grpc.insecure_channel(hostname),
+                                             PromClientInterceptor())
+            start_http_server(self._metrics_port)
+        else:
+            channel = grpc.insecure_channel(hostname)
+        return channel
