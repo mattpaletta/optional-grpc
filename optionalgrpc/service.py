@@ -51,7 +51,8 @@ class Service(object):
     def _get_service(self, inst, service_name: str = None):
         if _prometheus_support:
             server = grpc.server(futures.ThreadPoolExecutor(max_workers = self._pool_size),
-                                                            interceptors = (PromServerInterceptor,))
+                                                            interceptors = (PromServerInterceptor(),))
+            logging.debug("Using metrics port: {0}".format(self._metrics_port))
             start_http_server(self._metrics_port)
         else:
             server = grpc.server(futures.ThreadPoolExecutor(max_workers = self._pool_size))
@@ -142,6 +143,7 @@ class Service(object):
         if _prometheus_support:
             channel = grpc.intercept_channel(grpc.insecure_channel(hostname),
                                              PromClientInterceptor())
+            logging.debug("Using client metrics port: {0}".format(self._metrics_port))
             start_http_server(self._metrics_port)
         else:
             channel = grpc.insecure_channel(hostname)
