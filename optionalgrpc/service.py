@@ -45,7 +45,7 @@ class Service(object):
 
         self._port = port
         self._transport = None
-        self._pool_size = pool_size
+        self._pool_size = max(1, pool_size)
         self._num_retries = max(3, num_retries)
 
     def _get_service(self, inst, service_name: str = None):
